@@ -36,6 +36,9 @@ depth_c = [ Or(X[i][j] == 0, instance[2*i+3][j] == 1, X[i+1][j] == 1) for i in r
 # each filled cell either has a wall to the right of it or a filled cell to the right of it
 rightwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+2] == 1, X[i][j+1] == 1) for i in range(size) for j in range(size-1) ]
 
+# each filled cell either has a wall to the left of it or a filled cell to the left of it
+leftwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+2] == 1, X[i][j-1] == 1) for i in range(size) for j in range(1, size) ]
+
 def good_aquarium_level(row, col):
     k = col + 2
     good_aquarium = True
@@ -48,7 +51,7 @@ def good_aquarium_level(row, col):
 aquarium_water_level_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+1][j] == 0), good_aquarium_level(i,j), True)
                           for i in range(1,size) for j in range(size-1)]
 
-puzzle_c = cells_c + rows_c + cols_c + depth_c + rightwards_water_level_c + aquarium_water_level_c
+puzzle_c = cells_c + rows_c + cols_c + depth_c + rightwards_water_level_c + leftwards_water_level_c + aquarium_water_level_c
 
 s = Solver()
 s.add(puzzle_c)
