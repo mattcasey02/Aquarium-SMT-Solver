@@ -37,7 +37,7 @@ depth_c = [ Or(X[i][j] == 0, instance[2*i+3][j] == 1, X[i+1][j] == 1) for i in r
 rightwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+2] == 1, X[i][j+1] == 1) for i in range(size) for j in range(size-1) ]
 
 # each filled cell either has a wall to the left of it or a filled cell to the left of it
-leftwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+2] == 1, X[i][j-1] == 1) for i in range(size) for j in range(1, size) ]
+leftwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+1] == 1, X[i][j-1] == 1) for i in range(size) for j in range(1, size) ]
 
 def good_aquarium_level(row, col):
     k = col + 2
