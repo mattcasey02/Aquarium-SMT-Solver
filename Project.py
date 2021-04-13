@@ -2,20 +2,20 @@ from z3 import *
 
 #Corresponds to Instance1 Image
 #6x6 easy
-#instance = ((3,5,3,3,3,5),
-#            (1,1,1,1,1,1),
-#            (2,1,0,1,1,0,0,1),
-#            (1,1,0,0,0,1),
-#            (4,1,0,0,1,0,1,1),
-#            (0,0,1,0,0,0),
-#            (3,1,0,1,0,0,1,1),
-#            (1,0,1,1,0,1),
-#            (5,1,1,0,1,1,0,1),
-#            (0,0,0,0,1,0),
-#            (5,1,1,0,1,0,1,1),
-#            (0,1,1,0,0,0),
-#            (3,1,0,0,1,0,1,1),
-#            (1,1,1,1,1,1))
+#instance = ((3,5,3,3,3,5), Column filling requirements
+#            (1,1,1,1,1,1), Top row of horizontal walls
+#            (2,1,0,1,1,0,0,1), Vertical walls in row 1
+#            (1,1,0,0,0,1), Horizontal walls between rows 1&2
+#            (4,1,0,0,1,0,1,1), Vertical walls in row 2
+#            (0,0,1,0,0,0), Horizontal walls between rows 2&3
+#            (3,1,0,1,0,0,1,1), Vertical walls in row 3
+#            (1,0,1,1,0,1), Horizontal walls between rows 3&4
+#            (5,1,1,0,1,1,0,1), Vertical walls in row 4
+#            (0,0,0,0,1,0), Horizontal walls between rows 4&5
+#            (5,1,1,0,1,0,1,1), Vertical walls in row 5
+#            (0,1,1,0,0,0), Horizontal walls between rows 5&6
+#            (3,1,0,0,1,0,1,1), Vertical walls in row 6
+#            (1,1,1,1,1,1)) Bottom row of horizontal walls
 
 #Corresponds to Instance2 Image
 #6x6 Hard
