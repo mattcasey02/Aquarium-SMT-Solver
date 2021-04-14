@@ -66,7 +66,8 @@ def good_aquarium_level(row, col):
         k = k+1
     return good_aquarium
 
-# ...
+# each level in an aquarium is either full or empty
+# Does this also take care of criterions 5 and 6, can they be consolidated?
 aquarium_water_level_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+1][j] == 0), good_aquarium_level(i,j), True)
                           for i in range(1,size) for j in range(size-1)]
 
