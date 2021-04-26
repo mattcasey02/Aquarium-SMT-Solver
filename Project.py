@@ -64,7 +64,7 @@ instance4 = ((9,6,9,11,9,8,7,5,8,8,9,10,10,9,9),
             (1,0,0,1,1,0,0,1,0,1,0,1,1,0,0),
             (4,1,0,0,1,0,1,1,0,1,1,1,1,1,0,0,1),
             (0,0,1,0,0,1,1,0,1,0,0,0,1,1,0),
-            (10,1,0,1,1,0,0,0,1,0,1,1,1,0,0,1,0),
+            (10,1,0,1,1,0,0,0,1,0,1,1,1,0,0,1,1),
             (1,1,0,0,1,1,1,1,0,0,0,1,0,0,0),
             (4,1,0,1,1,1,0,0,0,1,1,1,0,1,0,1,1),
             (0,1,0,1,0,1,1,1,1,0,1,1,1,1,1),
@@ -117,8 +117,8 @@ leftwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+1] == 1, X[i][j-1
 def good_aquarium_level_above(row, col):
     k = col + 2
     good_aquarium = True
-    while (instance[2*row-1][k] != 1):
-        good_aquarium = And(good_aquarium, Or(instance[2*row][k-2] == 1,(X[row][k-2] == 1)))
+    while (instance[2*row][k] != 1):
+        good_aquarium = And(good_aquarium, Or(instance[2*row+1][k-2] == 1,(X[row][k-2] == 1)))
         k = k+1
     return good_aquarium
 
@@ -130,8 +130,8 @@ aquarium_water_level_above_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, 
 def good_aquarium_level_below(row, col):
     k = col + 2
     good_aquarium = True
-    while (instance[2*row+3][k] != 1):
-        good_aquarium = And(good_aquarium, Or(instance[2*row+2][k-2] == 1,(X[row][k-2] == 1)))
+    while (instance[2*row+4][k] != 1):
+        good_aquarium = And(good_aquarium, Or(instance[2*row+3][k-2] == 1,(X[row][k-2] == 1)))
         k = k+1
     return good_aquarium
 
