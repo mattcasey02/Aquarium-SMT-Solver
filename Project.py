@@ -51,7 +51,44 @@ instance3 = ((5,4,4,2,3,1),
             (3,1,0,1,1,0,0,1),
             (1,1,1,1,1,1))
 
-instance = instance3
+#Corresponds to Instance 4 Image
+#15x15 Hard
+
+instance4 = ((9,6,9,11,9,8,7,5,8,8,9,10,10,9,9),
+            (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+            (4,1,0,0,1,0,1,1,0,0,0,0,0,1,0,1,1),
+            (0,0,0,1,1,0,1,1,1,1,0,0,0,0,0),
+            (7,1,0,0,0,1,0,1,0,1,0,1,0,1,0,1,1),
+            (0,1,1,0,1,1,1,1,1,0,1,1,0,1,1),
+            (3,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1),
+            (1,0,0,1,1,0,0,1,0,1,0,1,1,0,0),
+            (4,1,0,0,1,0,1,1,0,1,1,1,1,1,0,0,1),
+            (0,0,1,0,0,1,1,0,1,0,0,0,1,1,0),
+            (10,1,0,1,1,0,0,0,1,0,1,1,1,0,0,1,0),
+            (1,1,0,0,1,1,1,1,0,0,0,1,0,0,0),
+            (4,1,0,1,1,1,0,0,0,1,1,1,0,1,0,1,1),
+            (0,1,0,1,0,1,1,1,1,0,1,1,1,1,1),
+            (11,1,1,0,1,0,1,0,1,0,1,0,1,0,0,0,1),
+            (1,1,1,1,0,0,0,1,0,1,1,1,0,1,1),
+            (10,1,0,1,0,1,1,0,0,1,0,0,0,1,1,0,1),
+            (0,1,0,1,1,1,0,0,1,1,1,1,1,1,0),
+            (6,1,1,1,1,0,1,1,0,1,0,1,1,0,1,1,1),
+            (1,0,0,0,1,0,1,1,0,1,0,1,1,0,1),
+            (9,1,0,1,1,1,1,0,0,1,1,0,0,0,1,1,1),
+            (0,1,1,0,0,1,0,0,0,1,1,1,0,1,0),
+            (9,1,1,1,0,1,0,1,0,1,0,0,1,1,1,1,1),
+            (0,0,1,1,0,1,0,0,1,1,1,0,1,0,0),
+            (12,1,1,1,0,1,1,1,0,0,1,1,0,0,0,1,1),
+            (1,0,1,1,0,0,1,1,1,0,1,1,1,1,0),
+            (13,1,0,1,0,0,1,0,0,0,0,0,0,1,0,0,1),
+            (0,0,0,1,1,0,0,1,0,1,1,1,1,1,0),
+            (14,1,0,1,1,1,0,0,1,1,1,0,1,0,1,1,1),
+            (1,1,1,0,1,1,1,0,1,1,1,1,1,0,1),
+            (11,1,0,0,1,1,0,0,1,0,0,0,1,0,1,0,1),
+            (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1))
+
+
+instance = instance4
 
 size = len(instance[0])
 
@@ -77,20 +114,31 @@ rightwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+2] == 1, X[i][j+
 # each filled cell either has a wall to the left of it or a filled cell to the left of it
 leftwards_water_level_c = [ Or(X[i][j] == 0, instance[2*i+2][j+1] == 1, X[i][j-1] == 1) for i in range(size) for j in range(1, size) ]
 
-def good_aquarium_level(row, col):
+def good_aquarium_level_above(row, col):
     k = col + 2
     good_aquarium = True
-    while (instance[2*row][k] != 1):
-        good_aquarium = And(good_aquarium, Or(instance[2*row+1][k-2] == 1,(X[row][k-2] == 1)))
+    while (instance[2*row-1][k] != 1):
+        good_aquarium = And(good_aquarium, Or(instance[2*row][k-2] == 1,(X[row][k-2] == 1)))
         k = k+1
     return good_aquarium
 
 # each level in an aquarium is either full or empty
 # Does this also take care of criterions 5 and 6, can they be consolidated?
-aquarium_water_level_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+1][j] == 0), good_aquarium_level(i,j), True)
+aquarium_water_level_above_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+1][j] == 0), good_aquarium_level_above(i,j), True)
                           for i in range(1,size) for j in range(size-1)]
 
-puzzle_c = cells_c + rows_c + cols_c + depth_c + rightwards_water_level_c + leftwards_water_level_c + aquarium_water_level_c
+def good_aquarium_level_below(row, col):
+    k = col + 2
+    good_aquarium = True
+    while (instance[2*row+3][k] != 1):
+        good_aquarium = And(good_aquarium, Or(instance[2*row+2][k-2] == 1,(X[row][k-2] == 1)))
+        k = k+1
+    return good_aquarium
+
+aquarium_water_level_below_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+3][j] == 0), good_aquarium_level_below(i,j), True)
+                          for i in range(0,size-1) for j in range(size-1)]
+
+puzzle_c = cells_c + rows_c + cols_c + depth_c + rightwards_water_level_c + leftwards_water_level_c + aquarium_water_level_above_c + aquarium_water_level_below_c
 
 s = Solver()
 s.add(puzzle_c)
