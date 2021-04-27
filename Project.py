@@ -113,49 +113,38 @@ cols_c = [ (Sum([ X[i][j] for i in range(height) ]) == instance[0][j]) for j in 
 # Preserves the depth propert of aquariums (no floating water allowed)
 depth_c = [ Or(X[i][j] == 0, instance[2*i+3][j] == 1, X[i+1][j] == 1) for i in range(height-1) for j in range(width) ]
 
-# Ensures each filled cell either has a wall to the right of it or a filled cell to the right of it
-# and either has a wall to the left of it or a filled cell to the left of it
-# Provides a basic check that water level is consistent across a level in an aquarium
-# Must be separated because these Or statements do not showrt circuit
-rightwards_water_level_c = [ If(X[i][j] == 1, Or(instance[2*i+2][j+2] == 1, X[i][j+1] == 1), True) for i in range(height) for j in range(width-1) ]
-leftwards_water_level_c = [ If(X[i][j] == 1, Or(instance[2*i+2][j+1] == 1, X[i][j-1] == 1), True) for i in range(height) for j in range(1, width) ]
 
-# Helper function which looks for edge cases where two cells are on the same level but not physically
-# connected. Instead they are connected by the aquarium level above them
-def good_aquarium_level_above(row, col):
-    k = col + 2
-    good_aquarium = True
-    # Walk to the right on the row above the given row until hitting a wall
-    # Ensures that there is either a wall or filled cell below each cell in the above row
-    while (instance[2*row][k] != 1):
-        good_aquarium = And(good_aquarium, Or(instance[2*row+1][k-2] == 1,(X[row][k-2] == 1)))
-        k = k+1
-    return good_aquarium
+# Returns whether there is a path between the given x,y coordinates
+def path_between(from_x, from_y, to_x, to_y):
+    worklist = [[from_x, from_y]]
+    seen = []
+    while (len(worklist) > 0):
+        curr = worklist.pop()
+        curr_x = curr[0]
+        curr_y = curr[1]
+        if (curr_x == to_x and curr_y == to_y):
+            return True
+        elif (not (curr in seen)):
+            print(instance[2*curr_x + 1][curr_y])
+            if (instance[2*curr_x + 2][curr_y + 2] == 0):
+                worklist.append([curr_x, curr_y + 1])
+            if (instance[2*curr_x + 2][curr_y + 1] == 0):
+                worklist.append([curr_x, curr_y - 1])
+            if (instance[2*curr_x + 1][curr_y] == 0):
+                worklist.append([curr_x - 1, curr_y])
+            if (instance[2*curr_x + 3][curr_y] == 0):
+                worklist.append([curr_x + 1, curr_y])
+        seen.append(curr)
+    return False
 
-# Ensures that water level in an aquarium is constant, even if two cells aren't physically connected.
-# Accounts for cells being connected by the aquarium level above
-aquarium_water_level_above_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+1][j] == 0), good_aquarium_level_above(i,j), True)
-                          for i in range(1,height) for j in range(width-1)]
-
-# Helper function which looks for edge cases where two cells are on the same level but not physically
-# connected. Instead they are connected by the aquarium level below them
-def good_aquarium_level_below(row, col):
-    k = col + 2
-    good_aquarium = True
-    # Walk to the right on the row below the given row until hitting a wall
-    # Ensures that there is either a wall or filled cell below each cell in the above row
-    while (instance[2*row+4][k] != 1):
-        good_aquarium = And(good_aquarium, Or(instance[2*row+3][k-2] == 1,(X[row][k-2] == 1)))
-        k = k+1
-    return good_aquarium
-
-# Ensures that water level in an aquarium is constant, even if two cells aren't physically connected.
-# Accounts for cells being connected by the aquarium level below
-aquarium_water_level_below_c = [If(And(X[i][j] == 1, instance[2*i+2][j+2] == 1, instance[2*i+3][j] == 0), good_aquarium_level_below(i,j), True)
-                          for i in range(0,height-1) for j in range(width-1)]
+# Ensures that at each level of an aquarium, water level is constant, even if cells aren't
+# directly connected. As long as the two cells are on the same level and in the same aquarium
+# they should both have the same fill status
+aquarium_level_constant_c = [If(And(X[i][j] == 1, path_between(i,j,i,k)), X[i][k] == 1, True)
+                           for i in range(height) for j in range(width-1) for k in range(width)]
 
 # Collection of all restraints on the puzzle
-puzzle_c = cells_c + rows_c + cols_c + depth_c + rightwards_water_level_c + leftwards_water_level_c + aquarium_water_level_above_c + aquarium_water_level_below_c
+puzzle_c = cells_c + rows_c + cols_c + depth_c + aquarium_level_constant_c
 
 # Creates a new solver instance, adds the restraints, and attempts to solve the puzzle
 s = Solver()
