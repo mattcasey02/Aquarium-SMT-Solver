@@ -125,7 +125,6 @@ def path_between(from_x, from_y, to_x, to_y):
         if (curr_x == to_x and curr_y == to_y):
             return True
         elif (not (curr in seen)):
-            print(instance[2*curr_x + 1][curr_y])
             if (instance[2*curr_x + 2][curr_y + 2] == 0):
                 worklist.append([curr_x, curr_y + 1])
             if (instance[2*curr_x + 2][curr_y + 1] == 0):
@@ -141,7 +140,7 @@ def path_between(from_x, from_y, to_x, to_y):
 # directly connected. As long as the two cells are on the same level and in the same aquarium
 # they should both have the same fill status
 aquarium_level_constant_c = [If(And(X[i][j] == 1, path_between(i,j,i,k)), X[i][k] == 1, True)
-                           for i in range(height) for j in range(width-1) for k in range(width)]
+                           for i in range(height) for j in range(width) for k in range(width)]
 
 # Collection of all restraints on the puzzle
 puzzle_c = cells_c + rows_c + cols_c + depth_c + aquarium_level_constant_c
